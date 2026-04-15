@@ -2,51 +2,43 @@ package app;
 
 public class TrainConsistApp {
 
-    // ---- CUSTOM EXCEPTION
-    public static class InvalidCapacityException extends Exception {
-        public InvalidCapacityException(String message) {
-            super(message);
-        }
-    }
+    // Bubble Sort method
+    public static void bubbleSort(int[] arr) {
+        if (arr == null) return;
 
-    // Passenger Bogie model with validation
-    public static class PassengerBogie {
-        private final String type;
-        private final int capacity;
+        int n = arr.length;
 
-        public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
-            if (capacity <= 0) {
-                throw new InvalidCapacityException("Capacity must be greater than zero");
+        for (int i = 0; i < n - 1; i++) {          // passes
+            for (int j = 0; j < n - i - 1; j++) {  // comparisons
+                if (arr[j] > arr[j + 1]) {
+                    // swap
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
             }
-            this.type = type;
-            this.capacity = capacity;
-        }
-
-        public String getType() { return type; }
-        public int getCapacity() { return capacity; }
-
-        @Override
-        public String toString() {
-            return type + " -> " + capacity;
         }
     }
 
     public static void main(String[] args) {
 
-        System.out.println("UC14 - Handle Invalid Bogie Capacity\n");
+        System.out.println("UC16 - Manual Sorting using Bubble Sort\n");
 
-        try {
-            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
-            System.out.println("Created Bogie: " + b1);
+        int[] capacities = {72, 56, 24, 70, 60};
 
-            // Invalid case
-            PassengerBogie b2 = new PassengerBogie("AC", 0);
-            System.out.println("Created Bogie: " + b2);
-
-        } catch (InvalidCapacityException e) {
-            System.out.println("Error: " + e.getMessage());
+        System.out.println("Original Capacities:");
+        for (int c : capacities) {
+            System.out.print(c + " ");
         }
 
-        System.out.println("\nUC14 exception handling completed ...");
+        // Sorting
+        bubbleSort(capacities);
+
+        System.out.println("\n\nSorted Capacities (Ascending):");
+        for (int c : capacities) {
+            System.out.print(c + " ");
+        }
+
+        System.out.println("\n\nUC16 sorting completed ...");
     }
 }
