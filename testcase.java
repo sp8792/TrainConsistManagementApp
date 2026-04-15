@@ -1,77 +1,65 @@
-ackage app;
+package app;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class UseCase13TrainConsistMgmntTest {
+class UseCase14TrainConsistMgmntTest {
 
     @Test
-    void testLoopFilteringLogic() {
-        List<TrainConsistApp.Bogie> list = new ArrayList<>();
-        list.add(new TrainConsistApp.Bogie("A", 50));
-        list.add(new TrainConsistApp.Bogie("B", 70));
+    void testException_ValidCapacityCreation() throws TrainConsistApp.InvalidCapacityException {
+        TrainConsistApp.PassengerBogie b =
+                new TrainConsistApp.PassengerBogie("Sleeper", 72);
 
-        List<TrainConsistApp.Bogie> result = TrainConsistApp.filterWithLoop(list);
-
-        assertEquals(1, result.size());
-        assertTrue(result.get(0).getCapacity() > 60);
+        assertNotNull(b);
     }
 
     @Test
-    void testStreamFilteringLogic() {
-        List<TrainConsistApp.Bogie> list = new ArrayList<>();
-        list.add(new TrainConsistApp.Bogie("A", 40));
-        list.add(new TrainConsistApp.Bogie("B", 80));
+    void testException_NegativeCapacityThrowsException() {
+        Exception ex = assertThrows(
+                TrainConsistApp.InvalidCapacityException.class,
+                () -> new TrainConsistApp.PassengerBogie("AC", -10)
+        );
 
-        List<TrainConsistApp.Bogie> result = TrainConsistApp.filterWithStream(list);
-
-        assertEquals(1, result.size());
-        assertTrue(result.get(0).getCapacity() > 60);
+        assertEquals("Capacity must be greater than zero", ex.getMessage());
     }
 
     @Test
-    void testLoopAndStreamResultsMatch() {
-        List<TrainConsistApp.Bogie> list = new ArrayList<>();
-        list.add(new TrainConsistApp.Bogie("A", 30));
-        list.add(new TrainConsistApp.Bogie("B", 90));
-        list.add(new TrainConsistApp.Bogie("C", 70));
-
-        List<TrainConsistApp.Bogie> loopResult = TrainConsistApp.filterWithLoop(list);
-        List<TrainConsistApp.Bogie> streamResult = TrainConsistApp.filterWithStream(list);
-
-        assertEquals(loopResult.size(), streamResult.size());
+    void testException_ZeroCapacityThrowsException() {
+        assertThrows(
+                TrainConsistApp.InvalidCapacityException.class,
+                () -> new TrainConsistApp.PassengerBogie("AC", 0)
+        );
     }
 
     @Test
-    void testExecutionTimeMeasurement() {
-        List<TrainConsistApp.Bogie> list = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            list.add(new TrainConsistApp.Bogie("X", i));
-        }
+    void testException_ExceptionMessageValidation() {
+        Exception ex = assertThrows(
+                TrainConsistApp.InvalidCapacityException.class,
+                () -> new TrainConsistApp.PassengerBogie("AC", 0)
+        );
 
-        long start = System.nanoTime();
-        TrainConsistApp.filterWithLoop(list);
-        long end = System.nanoTime();
-
-        long elapsed = end - start;
-
-        assertTrue(elapsed > 0);
+        assertEquals("Capacity must be greater than zero", ex.getMessage());
     }
 
     @Test
-    void testLargeDatasetProcessing() {
-        List<TrainConsistApp.Bogie> list = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            list.add(new TrainConsistApp.Bogie("X", i % 100));
-        }
+    void testException_ObjectIntegrityAfterCreation() throws TrainConsistApp.InvalidCapacityException {
+        TrainConsistApp.PassengerBogie b =
+                new TrainConsistApp.PassengerBogie("First Class", 24);
 
-        List<TrainConsistApp.Bogie> result = TrainConsistApp.filterWithStream(list);
+        assertEquals("First Class", b.getType());
+        assertEquals(24, b.getCapacity());
+    }
 
-        assertNotNull(result);
-        assertTrue(result.size() > 0);
+    @Test
+    void testException_MultipleValidBogiesCreation() throws TrainConsistApp.InvalidCapacityException {
+        TrainConsistApp.PassengerBogie b1 =
+                new TrainConsistApp.PassengerBogie("Sleeper", 72);
+
+        TrainConsistApp.PassengerBogie b2 =
+                new TrainConsistApp.PassengerBogie("AC Chair", 56);
+
+        assertNotNull(b1);
+        assertNotNull(b2);
     }
 }
