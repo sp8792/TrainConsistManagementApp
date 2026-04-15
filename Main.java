@@ -1,61 +1,59 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+package app;
 
 public class TrainConsistApp {
 
-    // Inner Bogie class to model passenger bogies
-    static class Bogie {
-        private final String name;
-        private final int capacity;
+    // ---- CUSTOM RUNTIME EXCEPTION
+    public static class CargoSafetyException extends RuntimeException {
+        public CargoSafetyException(String message) {
+            super(message);
+        }
+    }
 
-        public Bogie(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
+    // Goods Bogie model
+    public static class GoodsBogie {
+        private final String shape;
+        private String cargo;
+
+        public GoodsBogie(String shape) {
+            this.shape = shape;
         }
 
-        public String getName() {
-            return name;
-        }
+        public String getShape() { return shape; }
+        public String getCargo() { return cargo; }
 
-        public int getCapacity() {
-            return capacity;
-        }
+        // Assign cargo with safety validation
+        public void assignCargo(String cargo) {
+            try {
+                // Rule: Rectangular cannot carry Petroleum
+                if (shape.equalsIgnoreCase("Rectangular") &&
+                        cargo.equalsIgnoreCase("Petroleum")) {
+                    throw new CargoSafetyException("Unsafe cargo assignment!");
+                }
 
-        @Override
-        public String toString() {
-            return name + " -> " + capacity;
+                this.cargo = cargo;
+                System.out.println("Cargo assigned successfully -> " + cargo);
+
+            } catch (CargoSafetyException e) {
+                System.out.println("Error: " + e.getMessage());
+
+            } finally {
+                System.out.println("Cargo validation completed for " + shape + " bogie");
+            }
         }
     }
 
     public static void main(String[] args) {
 
-        System.out.println("UC7 - Sort Bogies by Capacity (Comparator)\n");
+        System.out.println("UC15 - Safe Cargo Assignment Using try-catch-finally\n");
 
-        // Create List of passenger bogies
-        List<Bogie> bogies = new ArrayList<>();
+        GoodsBogie b1 = new GoodsBogie("Cylindrical");
+        b1.assignCargo("Petroleum");   // valid
 
-        // Add bogies in the required order
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("General", 90));
+        System.out.println();
 
-        // Display before sorting
-        System.out.println("Before Sorting:");
-        for (Bogie b : bogies) {
-            System.out.println(b);
-        }
+        GoodsBogie b2 = new GoodsBogie("Rectangular");
+        b2.assignCargo("Petroleum");   // invalid
 
-        // Sort by capacity using Comparator.comparingInt
-        bogies.sort(Comparator.comparingInt(Bogie::getCapacity));
-
-        // Display after sorting
-        System.out.println("\nAfter Sorting by Capacity:");
-        for (Bogie b : bogies) {
-            System.out.println(b);
-        }
-
-        System.out.println("\nUC7 sorting completed ...");
+        System.out.println("\nUC15 runtime handling completed ...");
     }
 }
