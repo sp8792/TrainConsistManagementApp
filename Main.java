@@ -1,82 +1,49 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class TrainConsistApp {
 
-    // Make Bogie public so tests can reference it
-    public static class Bogie {
-        private final String name;
-        private final int capacity;
+    // Regex patterns
+    private static final Pattern TRAIN_ID_PATTERN = Pattern.compile("TRN-\\d{4}");
+    private static final Pattern CARGO_CODE_PATTERN = Pattern.compile("PET-[A-Z]{2}");
 
-        public Bogie(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
-        }
-
-        public String getName() { return name; }
-        public int getCapacity() { return capacity; }
-
-        @Override
-        public String toString() {
-            return name + " -> " + capacity;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Bogie)) return false;
-            Bogie bogie = (Bogie) o;
-            return capacity == bogie.capacity && Objects.equals(name, bogie.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, capacity);
-        }
+    // Validation methods (needed for test cases)
+    public static boolean isValidTrainId(String trainId) {
+        if (trainId == null || trainId.isEmpty()) return false;
+        return TRAIN_ID_PATTERN.matcher(trainId).matches();
     }
 
-    // Reusable sample data used by main and optionally by tests
-    public static List<Bogie> sampleBogies() {
-        List<Bogie> bogies = new ArrayList<>();
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Sleeper", 70));
-        return Collections.unmodifiableList(bogies);
-    }
-
-    // Public helper to compute total seats (tests should call this)
-    public static int totalSeats(List<Bogie> bogies) {
-        if (bogies == null) {
-            return 0; // chosen behavior: treat null as empty list
-        }
-        return bogies.stream()
-                .mapToInt(Bogie::getCapacity)
-                .sum();
-    }
-
-    // Public helper to group bogies by name (optional for UC9 tests)
-    public static Map<String, List<Bogie>> groupByName(List<Bogie> bogies) {
-        if (bogies == null) {
-            return Collections.emptyMap();
-        }
-        return bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+    public static boolean isValidCargoCode(String cargoCode) {
+        if (cargoCode == null || cargoCode.isEmpty()) return false;
+        return CARGO_CODE_PATTERN.matcher(cargoCode).matches();
     }
 
     public static void main(String[] args) {
-        System.out.println("UC10 - Count Total Seats in Train\n");
-        List<Bogie> bogies = sampleBogies();
-        System.out.println("Bogies in Train:");
-        bogies.forEach(System.out::println);
 
-        int total = totalSeats(bogies);
-        System.out.println("\nTotal Seating Capacity of Train: " + total + "\n");
-        System.out.println("UC10 aggregation completed ...");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("UC11 - Validate Train ID and Cargo Code\n");
+
+        // Input
+        System.out.print("Enter Train ID (Format: TRN-1234): ");
+        String trainId = scanner.nextLine();
+
+        System.out.print("Enter Cargo Code (Format: PET-AB): ");
+        String cargoCode = scanner.nextLine();
+
+        // Validation
+        boolean trainValid = isValidTrainId(trainId);
+        boolean cargoValid = isValidCargoCode(cargoCode);
+
+        // Output
+        System.out.println("\nValidation Results:");
+        System.out.println("Train ID Valid: " + trainValid);
+        System.out.println("Cargo Code Valid: " + cargoValid);
+
+        System.out.println("\nUC11 validation completed ...");
+
+        scanner.close();
     }
 }
