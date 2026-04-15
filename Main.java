@@ -1,44 +1,32 @@
 package app;
 
+import java.util.Arrays;
+
 public class TrainConsistApp {
 
-    // Bubble Sort method
-    public static void bubbleSort(int[] arr) {
+    // Sorting method using Arrays.sort()
+    public static void sortBogieNames(String[] arr) {
         if (arr == null) return;
-
-        int n = arr.length;
-
-        for (int i = 0; i < n - 1; i++) {          // passes
-            for (int j = 0; j < n - i - 1; j++) {  // comparisons
-                if (arr[j] > arr[j + 1]) {
-                    // swap
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
-            }
-        }
+        Arrays.sort(arr);
     }
 
     public static void main(String[] args) {
 
-        System.out.println("UC16 - Manual Sorting using Bubble Sort\n");
+        System.out.println("UC17 - Sort Bogie Names Using Arrays.sort()\n");
 
-        int[] capacities = {72, 56, 24, 70, 60};
+        String[] bogieNames = {
+                "Sleeper", "AC Chair", "First Class", "General", "Luxury"
+        };
 
-        System.out.println("Original Capacities:");
-        for (int c : capacities) {
-            System.out.print(c + " ");
-        }
+        System.out.println("Original Bogie Names:");
+        System.out.println(Arrays.toString(bogieNames));
 
         // Sorting
-        bubbleSort(capacities);
+        sortBogieNames(bogieNames);
 
-        System.out.println("\n\nSorted Capacities (Ascending):");
-        for (int c : capacities) {
-            System.out.print(c + " ");
-        }
+        System.out.println("\nSorted Bogie Names (Alphabetical):");
+        System.out.println(Arrays.toString(bogieNames));
 
-        System.out.println("\n\nUC16 sorting completed ...");
+        System.out.println("\nUC17 sorting completed ...");
     }
 }
