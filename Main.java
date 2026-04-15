@@ -1,10 +1,15 @@
+package app;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TrainConsistApp {
 
+    // Make Bogie public so tests can reference it
     public static class Bogie {
         private final String name;
         private final int capacity;
@@ -21,35 +26,57 @@ public class TrainConsistApp {
         public String toString() {
             return name + " -> " + capacity;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Bogie)) return false;
+            Bogie bogie = (Bogie) o;
+            return capacity == bogie.capacity && Objects.equals(name, bogie.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, capacity);
+        }
     }
 
-    public static void main(String[] args) {
-        System.out.println("UC9 - Group Bogies by Type\n");
-
-        // Create List of bogies (reused sample data)
+    // Reusable sample data used by main and optionally by tests
+    public static List<Bogie> sampleBogies() {
         List<Bogie> bogies = new ArrayList<>();
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 56));
         bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Sleeper", 78));
-        bogies.add(new Bogie("AC Chair", 60));
+        bogies.add(new Bogie("Sleeper", 70));
+        return Collections.unmodifiableList(bogies);
+    }
 
-        // Display all bogies
-        System.out.println("All Bogies:");
+    // Public helper to compute total seats (tests should call this)
+    public static int totalSeats(List<Bogie> bogies) {
+        if (bogies == null) {
+            return 0; // chosen behavior: treat null as empty list
+        }
+        return bogies.stream()
+                .mapToInt(Bogie::getCapacity)
+                .sum();
+    }
+
+    // Public helper to group bogies by name (optional for UC9 tests)
+    public static Map<String, List<Bogie>> groupByName(List<Bogie> bogies) {
+        if (bogies == null) {
+            return Collections.emptyMap();
+        }
+        return bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+    }
+
+    public static void main(String[] args) {
+        System.out.println("UC10 - Count Total Seats in Train\n");
+        List<Bogie> bogies = sampleBogies();
+        System.out.println("Bogies in Train:");
         bogies.forEach(System.out::println);
 
-        // Group using Collectors.groupingBy by bogie name
-        Map<String, List<Bogie>> groupedBogies = bogies.stream()
-                .collect(Collectors.groupingBy(Bogie::getName));
-
-        // Display grouped structure
-        System.out.println("\nGrouped Bogies:\n");
-        groupedBogies.forEach((type, list) -> {
-            System.out.println("Bogie Type: " + type);
-            list.forEach(b -> System.out.println("Capacity -> " + b.getCapacity()));
-            System.out.println();
-        });
-
-        System.out.println("UC9 grouping completed ...");
+        int total = totalSeats(bogies);
+        System.out.println("\nTotal Seating Capacity of Train: " + total + "\n");
+        System.out.println("UC10 aggregation completed ...");
     }
 }
